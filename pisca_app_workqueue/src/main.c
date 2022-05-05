@@ -15,7 +15,6 @@ const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
 #define MY_PRIORITY 5
 K_THREAD_STACK_DEFINE(app_stack_area, MY_STACK_SIZE);
 static struct k_work_q app_work_q;
-
 static struct k_work my_work;
 
 void work_handler(struct k_work *work)

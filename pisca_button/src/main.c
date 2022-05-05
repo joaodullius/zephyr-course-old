@@ -36,7 +36,7 @@ void main(void)
 {
     int ret;
 
-    printk("Hello Led!\n");
+    printk("Hello Pisca Button!\n");
 
     if (!device_is_ready(led.port)) {
         return;
