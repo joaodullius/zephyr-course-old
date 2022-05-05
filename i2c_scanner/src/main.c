@@ -14,36 +14,30 @@
 #include <math.h>
 #include <drivers/gpio.h>
 
-#define I2C_DEV DT_NODELABEL(arduino_i2c)
+#define I2C_NODE DT_NODELABEL(arduino_i2c)
 
 void main(void)
 {
 
-    printk("Starting i2c scanner at %s\n", DT_LABEL(I2C_DEV));
+    printk("Starting i2c scanner at %s\n", DT_LABEL(I2C_NODE));
 
-	const struct device *i2c_dev = DEVICE_DT_GET(I2C_DEV);
-    	if (!i2c_dev) {
+	const struct device *i2c_dev = DEVICE_DT_GET(I2C_NODE);
+    	if (i2c_dev == NULL || !device_is_ready(i2c_dev)) {
 		printk("I2C: Device driver not found.\n");
 		return;
 	}
 	
-	i2c_dev = device_get_binding(DT_LABEL(I2C_DEV));
+	i2c_dev = device_get_binding(DT_LABEL(I2C_NODE));
 
-	uint8_t error = 0;
+	uint8_t ret = 0;
 	
 	i2c_configure(i2c_dev, I2C_SPEED_SET(I2C_SPEED_STANDARD));
 	
-	for (uint8_t i = 0; i <= 0x7F; i++) {
-		struct i2c_msg msgs[1];
-		uint8_t dst = 1;
+	for (uint8_t i = 0; i <= 0x7F; i++) {	
 
-		/* Send the address to read from */
-		msgs[0].buf = &dst;
-		msgs[0].len = 1U;
-		msgs[0].flags = I2C_MSG_WRITE | I2C_MSG_STOP;
-		
-		error = i2c_transfer(i2c_dev, &msgs[0], 1, i);
-		if (error == 0) {
+        ret = i2c_reg_write_byte(i2c_dev,i, 0, 1);
+
+        if (ret == 0) {
 			printk("0x%2x FOUND\n", i);
 		}
 		else {
