@@ -7,12 +7,9 @@
  */
 
 #include <zephyr.h>
-#include <sys/printk.h>
 #include <drivers/i2c.h>
 #include <string.h>
 #include <stdlib.h>
-#include <math.h>
-#include <drivers/gpio.h>
 
 #define I2C_NODE DT_NODELABEL(arduino_i2c)
 
@@ -29,13 +26,14 @@ void main(void)
 	
 	i2c_dev = device_get_binding(DT_LABEL(I2C_NODE));
 
+    uint8_t buffer = 0;
 	uint8_t ret = 0;
 	
 	i2c_configure(i2c_dev, I2C_SPEED_SET(I2C_SPEED_STANDARD));
 	
 	for (uint8_t i = 0; i <= 0x7F; i++) {	
 
-        ret = i2c_reg_write_byte(i2c_dev,i, 0, 1);
+        ret = i2c_reg_read_byte(i2c_dev, i, 0, &buffer);
 
         if (ret == 0) {
 			printk("0x%2x FOUND\n", i);
