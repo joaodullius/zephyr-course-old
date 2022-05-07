@@ -31,6 +31,8 @@ novas estruturas do Zephyr gradativamente.
   ``driver/i2c``
 * **sensor**: Leitura de temperatura e humidade de sensor HTS221.
   ``sensor``
+* **sensor_log**: Adiciona sistema de LOG.
+  ``log`` ``sensor``
 * **sensor_msgq**: Adiona amostragem periódica, uso de Message Queue com dump de amostras.
   ``k_msgq`` ``sensor`` ``k_work``  ``k_timer`` ``driver/gpio`` ``gpio_callback``
 
