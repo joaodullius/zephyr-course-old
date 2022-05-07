@@ -35,6 +35,8 @@ novas estruturas do Zephyr gradativamente.
   ``log`` ``sensor``
 * **sensor_msgq**: Adiona amostragem periódica, uso de Message Queue com dump de amostras.
   ``k_msgq`` ``sensor`` ``k_work``  ``k_timer`` ``driver/gpio`` ``gpio_callback``
+* **timer_msgq**: Simula sensor amostrando e consumo lentro através de timer.
+  ``k_msgq`` ``k_work``  ``k_timer``
 
 =================================
 Outros Recursos
