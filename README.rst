@@ -5,4 +5,36 @@
    contain the root `toctree` directive.
 
 Bem vindo ao GitHub do Curso Introdução ao Zephyr
-=========================================
+===================================================
+
+
+
+=================================
+Exemplos
+=================================
+
+Os exemplos aqui apresentados foram pensados de forma incremental, introduzindo
+novas estruturas do Zephyr gradativamente.
+
+* **first_project**: Hello World com estrutura básica de projeto.
+* **pisca_led**: Pisca Led básico. 
+  ``driver/gpio``
+* **pisca_timer**: Introduz o uso do timer. 
+  ``k_timer`` ``driver/gpio`` 
+* **pisca_workqueue**:  Introduz o uso da System Work Queue.
+  ``k_work`` ``k_timer`` ``driver/gpio``  
+* **pisca_app_workqueue**: Altera para uso da Application Work Queue.
+  ``k_work`` ``k_timer`` ``driver/gpio`` 
+* **pisca_button**: Adiciona botão com interrupção. 
+  ``driver/gpio`` ``gpio_callback`` ``k_work``
+* **i2c_scanner**: Escaneia dispositivos no barramento i2c_scanner.
+  ``driver/i2c``
+* **sensor**: Leitura de temperatura e humidade de sensor HTS221.
+  ``sensor``
+* **sensor_msgq**: Adiona amostragem periódica, uso de Message Queue com dump de amostras.
+  ``k_msgq`` ``sensor`` ``k_work``  ``k_timer`` ``driver/gpio`` ``gpio_callback``
+
+=================================
+Outros Recursos
+=================================
+* **cmd**: Exemplos de .cmd para setar variáveis do Zephyr no Windows
