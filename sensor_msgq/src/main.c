@@ -12,13 +12,17 @@
 #define MSGQ_SIZE 16
 #define SAMPLE_INTERVAL 500
 
+#define CONFIG_SENSOR_SIM
+
 //Button Binding
 #define BUTTON0_NODE DT_NODELABEL(button0)
 const struct gpio_dt_spec button = GPIO_DT_SPEC_GET(BUTTON0_NODE, gpios);
 static struct gpio_callback button_cb_data;
 
-//Sensor Binding
-const struct device *hts221 = DEVICE_DT_GET_ANY(st_hts221);
+#if !defined(CONFIG_SENSOR_SIM)
+	//Sensor Binding
+	const struct device *hts221 = DEVICE_DT_GET_ANY(st_hts221);
+#endif
 
 static int timestamp = 0;
 
@@ -54,6 +58,7 @@ void wk_sample_h(struct k_work *work){
 	uint8_t ret = 0;
 	struct mqsq_item_t tx_data;
 	
+#if !defined(CONFIG_SENSOR_SIM)
 	if (sensor_sample_fetch(hts221) < 0) {
 			printf("HTS221 Sensor sample update error\n");
 			return;
@@ -62,6 +67,12 @@ void wk_sample_h(struct k_work *work){
 	/* Get sensor data */
 	sensor_channel_get(hts221, SENSOR_CHAN_AMBIENT_TEMP, &temp);
 	sensor_channel_get(hts221, SENSOR_CHAN_HUMIDITY, &hum);
+#else
+	temp.val1=20+((timestamp*11)%6);
+	temp.val2=0;
+	hum.val1=70+((timestamp*13)%7);
+	hum.val2=0;
+#endif	
 	tx_data.temp=temp;
 	tx_data.hum=hum;
 	tx_data.timestamp=timestamp++;
@@ -73,10 +84,10 @@ void wk_sample_h(struct k_work *work){
 }
 static K_WORK_DEFINE(wk_sample, wk_sample_h); 
 
-void produce_timer_handler(struct k_timer *timer_id)
+void sample_timer_h(struct k_timer *timer_id)
 {
     k_work_submit(&wk_sample);}
-K_TIMER_DEFINE(sampler_timer, produce_timer_handler, NULL);
+K_TIMER_DEFINE(sampler_timer, sample_timer_h, NULL);
 
 void button_pressed(const struct device *dev, struct gpio_callback *cb,
 		    uint32_t pins){
@@ -84,10 +95,15 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 }
 void main(void){
 
+#if !defined(CONFIG_SENSOR_SIM)
 	if (hts221 == NULL) {
 		printf("Could not get HTS221 device\n");
 		return;
 	};
+#else
+	printf("Using simulated sensor\n");
+#endif
+
 	printf("Sensor Message Queue Sample\n");
 	printf("MSGQ Width:              %d\n", sizeof(struct mqsq_item_t));
 	printf("Sampling Interval:       %d ms\n", SAMPLE_INTERVAL);
