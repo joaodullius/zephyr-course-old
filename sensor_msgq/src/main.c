@@ -9,6 +9,9 @@
 #include <drivers/sensor.h>
 #include <drivers/gpio.h>
 
+#include <logging/log.h>
+LOG_MODULE_REGISTER(sensor_msgq);
+
 #define MSGQ_SIZE 16
 #define SAMPLE_INTERVAL 500
 
@@ -47,7 +50,7 @@ void wk_consume_h(struct k_work *work){
 		not_empty = true;
 	}
 	if (not_empty == false){
-		printf("Consumer | Empty Queue\n");
+		LOG_WRN("Consumer | Empty Queue");
 	}
 }
 static K_WORK_DEFINE(wk_consume, wk_consume_h); 
@@ -60,7 +63,7 @@ void wk_sample_h(struct k_work *work){
 	
 #if !defined(CONFIG_SENSOR_SIM)
 	if (sensor_sample_fetch(hts221) < 0) {
-			printf("HTS221 Sensor sample update error\n");
+			LOG_ERR("HTS221 Sensor sample update error");
 			return;
 		}
 
@@ -79,7 +82,7 @@ void wk_sample_h(struct k_work *work){
 
 	ret = k_msgq_put(&my_msgq, &tx_data, K_NO_WAIT);
 	if (ret != 0) {
-            printf("Sampler | Lost sample - MSGQ Full\n");
+            LOG_WRN("Sampler | Lost sample - MSGQ Full");
         }
 }
 static K_WORK_DEFINE(wk_sample, wk_sample_h); 
@@ -97,17 +100,17 @@ void main(void){
 
 #if !defined(CONFIG_SENSOR_SIM)
 	if (hts221 == NULL) {
-		printf("Could not get HTS221 device\n");
+		LOG_ERR("Could not get HTS221 device");
 		return;
 	};
 #else
-	printf("Using simulated sensor\n");
+	LOG_INF("Using simulated sensor");
 #endif
 
-	printf("Sensor Message Queue Sample\n");
-	printf("MSGQ Width:              %d\n", sizeof(struct mqsq_item_t));
-	printf("Sampling Interval:       %d ms\n", SAMPLE_INTERVAL);
-	printf("MSGQ Overflow Interval : %d ms\n", SAMPLE_INTERVAL*MSGQ_SIZE);
+	LOG_INF("Sensor Message Queue Sample");
+	LOG_INF("MSGQ Width:              %d", sizeof(struct mqsq_item_t));
+	LOG_INF("Sampling Interval:       %d ms", SAMPLE_INTERVAL);
+	LOG_INF("MSGQ Overflow Interval : %d ms", SAMPLE_INTERVAL*MSGQ_SIZE);
 
 	gpio_pin_configure_dt(&button, GPIO_INPUT);
     gpio_pin_interrupt_configure_dt(&button, GPIO_INT_EDGE_TO_ACTIVE);
