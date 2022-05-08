@@ -15,16 +15,14 @@ LOG_MODULE_REGISTER(sensor_msgq);
 #define MSGQ_SIZE 16
 #define SAMPLE_INTERVAL 500
 
-#define CONFIG_SENSOR_SIM
-
 //Button Binding
 #define BUTTON0_NODE DT_NODELABEL(button0)
 const struct gpio_dt_spec button = GPIO_DT_SPEC_GET(BUTTON0_NODE, gpios);
 static struct gpio_callback button_cb_data;
 
-#if !defined(CONFIG_SENSOR_SIM)
+#if !defined(CONFIG_APP_SENSOR_SIM)
 	//Sensor Binding
-	const struct device *hts221 = DEVICE_DT_GET_ANY(st_hts221);
+const struct device *sensor = DEVICE_DT_GET(DT_INST(0,st_hts221));
 #endif
 
 static int timestamp = 0;
@@ -40,11 +38,11 @@ static struct mqsq_item_t {
 K_MSGQ_DEFINE(my_msgq, sizeof(struct mqsq_item_t), MSGQ_SIZE, 4);
 
 // Defining Data Consumer Work Queue
-void wk_consume_h(struct k_work *work){
+void wk_print_h(struct k_work *work){
 	bool not_empty = false;
 	struct mqsq_item_t rx_data;
 	while(k_msgq_get(&my_msgq, &rx_data, K_NO_WAIT) == 0){
-		printf("%04d | HTS221 | Temp %.1f C | Hum %.1f%%\n", rx_data.timestamp,
+		printf("%04d | Sensor Temp %.1f C | Hum %.1f%%\n", rx_data.timestamp,
 										sensor_value_to_double(&rx_data.temp),
 										sensor_value_to_double(&rx_data.hum));
 		not_empty = true;
@@ -53,7 +51,7 @@ void wk_consume_h(struct k_work *work){
 		LOG_WRN("Consumer | Empty Queue");
 	}
 }
-static K_WORK_DEFINE(wk_consume, wk_consume_h); 
+static K_WORK_DEFINE(wk_print, wk_print_h); 
 
 // Defining Sensor Sampler Work Queue
 void wk_sample_h(struct k_work *work){
@@ -61,15 +59,16 @@ void wk_sample_h(struct k_work *work){
 	uint8_t ret = 0;
 	struct mqsq_item_t tx_data;
 	
-#if !defined(CONFIG_SENSOR_SIM)
-	if (sensor_sample_fetch(hts221) < 0) {
-			LOG_ERR("HTS221 Sensor sample update error");
+#if !defined(CONFIG_APP_SENSOR_SIM)
+		uint8_t err;
+		err = sensor_sample_fetch(sensor);
+		if(err){
+			printf("Sensor fetch error\n");
 			return;
 		}
-
 	/* Get sensor data */
-	sensor_channel_get(hts221, SENSOR_CHAN_AMBIENT_TEMP, &temp);
-	sensor_channel_get(hts221, SENSOR_CHAN_HUMIDITY, &hum);
+	sensor_channel_get(sensor, SENSOR_CHAN_AMBIENT_TEMP, &temp);
+	sensor_channel_get(sensor, SENSOR_CHAN_HUMIDITY, &hum);
 #else
 	temp.val1=20+((timestamp*11)%6);
 	temp.val2=0;
@@ -94,20 +93,21 @@ K_TIMER_DEFINE(sampler_timer, sample_timer_h, NULL);
 
 void button_pressed(const struct device *dev, struct gpio_callback *cb,
 		    uint32_t pins){
-	k_work_submit(&wk_consume);
-}
+	k_work_submit(&wk_print);
+	}
 void main(void){
 
-#if !defined(CONFIG_SENSOR_SIM)
-	if (hts221 == NULL) {
-		LOG_ERR("Could not get HTS221 device");
+#if !defined(CONFIG_APP_SENSOR_SIM)
+	if (sensor == NULL || !device_is_ready(sensor)) {
+		printf("Could not get sensor device\n");
 		return;
-	};
+	}
 #else
 	LOG_INF("Using simulated sensor");
 #endif
 
 	LOG_INF("Sensor Message Queue Sample");
+	LOG_INF("MSGQ Size:               %d", MSGQ_SIZE);
 	LOG_INF("MSGQ Width:              %d", sizeof(struct mqsq_item_t));
 	LOG_INF("Sampling Interval:       %d ms", SAMPLE_INTERVAL);
 	LOG_INF("MSGQ Overflow Interval : %d ms", SAMPLE_INTERVAL*MSGQ_SIZE);

@@ -16,8 +16,6 @@ LOG_MODULE_REGISTER(sensor_msgq);
 #define SAMPLE_INTERVAL 250
 #define PRINT_INTERVAL SAMPLE_INTERVAL*MSGQ_SIZE
 
-#define CONFIG_SENSOR_SIM
-
 static int timestamp = 0;
 
 // Defining Message Queue Structure
@@ -34,7 +32,7 @@ void wk_print_h(struct k_work *work){
 	bool not_empty = false;
 	struct mqsq_item_t rx_data;
 	while(k_msgq_get(&my_msgq, &rx_data, K_NO_WAIT) == 0){
-		printf("%04d | HTS221 | Temp %.1f C | Hum %.1f%%\n", rx_data.timestamp,
+		printf("%04d | Sensor Temp %.1f C | Hum %.1f%%\n", rx_data.timestamp,
 										sensor_value_to_double(&rx_data.temp),
 										sensor_value_to_double(&rx_data.hum));
 		not_empty = true;
@@ -75,7 +73,8 @@ K_TIMER_DEFINE(sampler_timer, sample_timer_h, NULL);
 
 void print_timer_h(struct k_timer *timer_id)
 {
-    k_work_submit(&wk_print);}
+	k_work_submit(&wk_print);
+	}
 K_TIMER_DEFINE(print_timer, print_timer_h, NULL);
 
 void main(void){
