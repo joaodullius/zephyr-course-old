@@ -14,7 +14,7 @@
 LOG_MODULE_REGISTER(app_sensor);
 
 static struct sensor_value accel[3];
-const struct device *sensor = DEVICE_DT_GET(DT_INST(0,st_lsm6dsl));
+const struct device *sensor = DEVICE_DT_GET(DT_INST(0,st_lis2dh));
 
 static int sensor_trig_cnt;
 
@@ -32,22 +32,10 @@ void main(void)
 	int cnt = 1;
 
 	if (sensor == NULL || !device_is_ready(sensor)) {
-		printf("Could not get sensor device\n");
+		LOG_ERR("Could not get sensor device\n");
 		return;
 	}
-
-
-/* Set sensor accel sampling frequency to 104 Hz */
-	struct sensor_value odr_attr;
-	odr_attr.val1 = 208;
-	odr_attr.val2 = 0;
-
-	if (sensor_attr_set(sensor, SENSOR_CHAN_ACCEL_XYZ,
-			    SENSOR_ATTR_SAMPLING_FREQUENCY, &odr_attr) < 0) {
-		printk("Cannot set sampling frequency for accelerometer.\n");
-		return;
-	}
-
+	
 	/* Set Trigger */
 	struct sensor_trigger trig;
 	trig.type = SENSOR_TRIG_DATA_READY;
