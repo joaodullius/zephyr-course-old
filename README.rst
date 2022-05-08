@@ -33,6 +33,8 @@ novas estruturas do Zephyr gradativamente.
   ``sensor``
 * **sensor_log**: Adiciona sistema de LOG.
   ``log`` ``sensor``
+* **sensor_trigger**: Acelerômetro com Trigger
+  ``log`` ``sensor`` 
 * **sensor_msgq**: Adiona amostragem periódica, uso de Message Queue com dump de amostras.
   ``k_msgq`` ``sensor`` ``k_work``  ``k_timer`` ``driver/gpio`` ``gpio_callback``
 * **timer_msgq**: Simula sensor amostrando e consumo lentro através de timer.
