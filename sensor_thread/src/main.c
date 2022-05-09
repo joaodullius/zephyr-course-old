@@ -32,6 +32,7 @@ static struct mqsq_item_t {
 K_MSGQ_DEFINE(my_msgq, sizeof(struct mqsq_item_t), MSGQ_SIZE, 4);
 
 // Defining Print Thread
+#define PRINT_THREAD_STACK 2048
 void print_thread_fn(void){
 	while (1)
 	{
@@ -42,9 +43,6 @@ void print_thread_fn(void){
 										sensor_value_to_double(&rx_data.hum));
 	}
 }
-K_THREAD_DEFINE(print_thread, 2048,
-				print_thread_fn, NULL, NULL, NULL,
-				K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 
 // Defining Sensor Sampler Work Queue
 void wk_sample_h(struct k_work *work){
@@ -103,7 +101,9 @@ void main(void){
 	
 	k_timer_start(&sampler_timer, K_SECONDS(1), K_MSEC(SAMPLE_INTERVAL));
 
-	k_thread_start(print_thread);
-
     printk("Fim do main().\n");
 }
+
+K_THREAD_DEFINE(print_thread, PRINT_THREAD_STACK,
+				print_thread_fn, NULL, NULL, NULL,
+				K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
