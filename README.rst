@@ -41,6 +41,8 @@ novas estruturas do Zephyr gradativamente.
   ``k_msgq`` ``k_work``  ``k_timer``
 * **sensor_thread**: Amostragem periódica e thread adicional para leitura.
   ``thread`` ``k_msgq`` ``sensor`` ``k_work``  ``k_timer``
+* **uart_poll**: Uart no modo pool
+  ``uart``
 
 =================================
 Outros Recursos
