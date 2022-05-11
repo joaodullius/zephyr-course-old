@@ -43,6 +43,8 @@ novas estruturas do Zephyr gradativamente.
   ``thread`` ``k_msgq`` ``sensor`` ``k_work``  ``k_timer``
 * **uart_poll**: Uart no modo pool
   ``uart``
+* **uart_int**: Uart no modo interrupt
+  ``uart`` ``k_msgq``
 
 =================================
 Outros Recursos
