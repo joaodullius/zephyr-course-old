@@ -39,7 +39,7 @@ novas estruturas do Zephyr gradativamente.
   ``k_msgq`` ``sensor`` ``k_work``  ``k_timer`` ``driver/gpio`` ``gpio_callback``
 * **timer_msgq**: Simula sensor amostrando e consumo lentro através de timer.
   ``k_msgq`` ``k_work``  ``k_timer``
-* **sensor_msgq**: Amostragem periódica e thread adicional para leitura.
+* **sensor_thread**: Amostragem periódica e thread adicional para leitura.
   ``thread`` ``k_msgq`` ``sensor`` ``k_work``  ``k_timer``
 
 =================================
