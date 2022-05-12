@@ -11,13 +11,14 @@
 #include <string.h>
 
 /* change this to any other UART peripheral if desired */
-#define UART_DEVICE_NODE DT_CHOSEN(zephyr_shell_uart)
+
 
 #define MSG_SIZE 32
 
 /* queue to store up to 10 messages (aligned to 4-byte boundary) */
 K_MSGQ_DEFINE(uart_msgq, MSG_SIZE, 10, 4);
 
+#define UART_DEVICE_NODE DT_CHOSEN(zephyr_shell_uart)
 static const struct device *uart_dev = DEVICE_DT_GET(UART_DEVICE_NODE);
 
 /* receive buffer used in UART ISR callback */
@@ -72,7 +73,7 @@ void main(void)
 {
 	char tx_buf[MSG_SIZE];
 
-	if (!device_is_ready(uart_dev)) {
+	if (uart_dev == NULL || !device_is_ready(uart_dev)) {
 		printk("UART device not found!");
 		return;
 	}
