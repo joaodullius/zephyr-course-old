@@ -1,0 +1,5 @@
+config LED_BLINK_PERIOD
+    int "Define Led Blink Period in ms"
+    default 1000
+
+source "Kconfig.zephyr"
