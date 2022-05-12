@@ -45,6 +45,8 @@ novas estruturas do Zephyr gradativamente.
   ``uart``
 * **uart_int**: Uart no modo interrupt
   ``uart`` ``k_msgq``
+* **uart_async**: Uart no modo assincrono com DMA - Verificar suporte no hardware
+  ``uart`` ``k_msgq`
 
 =================================
 Outros Recursos
