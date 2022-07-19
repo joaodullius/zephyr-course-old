@@ -31,6 +31,8 @@ novas estruturas do Zephyr gradativamente.
   ``driver/i2c``
 * **sensor**: Leitura de temperatura e humidade de sensor HTS221.
   ``sensor``
+* **sensor_timer**: Adiciona a API de Timer.
+  ``timer`` ``sensor``
 * **sensor_log**: Adiciona sistema de LOG.
   ``log`` ``sensor``
 * **sensor_trigger**: Acelerômetro com Trigger
