@@ -1,5 +1,0 @@
-config APP_SENSOR_SIM
-    bool "Enable Simulated Sensor"
-    default not
-
-source "Kconfig.zephyr"
