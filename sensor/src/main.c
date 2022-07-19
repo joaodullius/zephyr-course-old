@@ -10,8 +10,13 @@
 #include <stdio.h>
 #include <sys/util.h>
 
+
+#define HTS221_DEVNAME		DT_LABEL(DT_INST(0, st_hts221))
+
 static struct sensor_value temp, hum;
 const struct device *sensor = DEVICE_DT_GET(DT_INST(0,st_hts221));
+
+	const struct device *hts221 = device_get_binding(HTS221_DEVNAME);
 
 void main(void)
 {
