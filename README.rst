@@ -53,6 +53,8 @@ novas estruturas do Zephyr gradativamente.
   ``kconfig`` ``driver/gpio``
 * **pisca_led_serial_recovery**: Pisca Led com MCUBoot 
   ``mcuboot`` ``driver/gpio``
+* **pisca_led_mcumgr**: Pisca Led com MCUBoot, MCUMGR e SMP Server
+  ``smp_srv`` ``mcumgr`` ``mcuboot`` ``kconfig`` ``driver/gpio``
 
 
 =================================
