@@ -1,0 +1,9 @@
+config LED_BLINK_PERIOD
+    int "Define Led Blink Period in ms"
+    default 1000
+
+config TESTE
+    bool "Enable Teste"
+    default not
+
+source "Kconfig.zephyr"

@@ -47,8 +47,10 @@ novas estruturas do Zephyr gradativamente.
   ``uart`` ``k_msgq``
 * **uart_async**: Uart no modo assincrono com DMA - Verificar suporte no hardware
   ``uart`` ``k_msgq`
-* **pisca_led_mcuboot**: Pisca Led com MCUBoot + MCUMGR + SMP Services
-  ``smp_srv`` ``mcumgr`` ``mcuboot`` ``driver/gpio``
+* **pisca_led_kconfig**: Pisca Led com Kconfig 
+  ``kconfig`` ``driver/gpio``
+* **pisca_led_serial_recovery**: Pisca Led com MCUBoot 
+  ``mcuboot`` ``driver/gpio``
 
 
 =================================
