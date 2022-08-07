@@ -16,8 +16,11 @@ LOG_MODULE_REGISTER(uart_async, 4);
 
 #define MSG_SIZE 32
 
-/* queue to store up to 10 messages (aligned to 4-byte boundary) */
-K_MSGQ_DEFINE(uart_msgq, MSG_SIZE, 10, 4);
+static struct msgq_item_t {
+	char buffer[MSG_SIZE];
+	int lenght;
+};
+K_MSGQ_DEFINE(uart_msgq, sizeof(struct msgq_item_t), 10, 4);
 
 #define UART_DEVICE_NODE DT_CHOSEN(zephyr_shell_uart)
 static const struct device *uart_dev = DEVICE_DT_GET(UART_DEVICE_NODE);
@@ -27,6 +30,7 @@ static char rx_buf[MSG_SIZE];
 
 static void uart_cb(const struct device *dev, struct uart_event *evt, void *user_data)
 {
+	struct msgq_item_t rx_data;
 	switch (evt->type) {
 	
 	case UART_TX_DONE:
@@ -42,8 +46,10 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 	case UART_RX_RDY:
 		LOG_DBG("UART_RX_RDY");
 		LOG_INF("Received data %d bytes", evt->data.rx.len);
+		strcpy(rx_data.buffer, rx_buf);
+		rx_data.lenght=evt->data.rx.len;
 		/* if queue is full, message is silently dropped */
-		k_msgq_put(&uart_msgq, &rx_buf, K_NO_WAIT);
+		k_msgq_put(&uart_msgq, &rx_data, K_NO_WAIT);
 		uart_rx_disable(uart_dev);
 		break;
 
@@ -73,11 +79,14 @@ static void uart_cb(const struct device *dev, struct uart_event *evt, void *user
 
 void uart_send_fn(int parm1, int parm2, int parm3) {
 	char tx_buf[MSG_SIZE];
+	struct msgq_item_t tx_data;
+
 	int8_t err;
 	while (1) {
-		k_msgq_get(&uart_msgq, &tx_buf, K_FOREVER);
+		k_msgq_get(&uart_msgq, &tx_data, K_FOREVER);
+		strcpy(tx_buf, tx_data.buffer);
 		LOG_DBG("Send Message ");
-		err = uart_tx(uart_dev, tx_buf, strlen(tx_buf), SYS_FOREVER_MS);
+		err = uart_tx(uart_dev, tx_buf, tx_data.lenght, SYS_FOREVER_MS);
 		if (err){
 			LOG_ERR("Transmit Error");
 			return;
