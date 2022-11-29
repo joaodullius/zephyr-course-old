@@ -4,19 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <zephyr.h>
-#include <device.h>
-#include <drivers/sensor.h>
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/sensor.h>
 #include <stdio.h>
-#include <sys/util.h>
-
-
-#define HTS221_DEVNAME		DT_LABEL(DT_INST(0, st_hts221))
+#include <zephyr/sys/util.h>
 
 static struct sensor_value temp, hum;
 const struct device *sensor = DEVICE_DT_GET(DT_INST(0,st_hts221));
-
-	const struct device *hts221 = device_get_binding(HTS221_DEVNAME);
 
 void main(void)
 {

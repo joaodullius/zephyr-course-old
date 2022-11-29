@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/sensor.h>
 #include <stdio.h>
@@ -63,7 +63,6 @@ K_TIMER_DEFINE(my_timer, timer_handler, NULL);
 
 void main(void)
 {
-    uint8_t ret;
     printk("Hello Sensor MSGQ\n");
 
     if (sensor == NULL || !device_is_ready(sensor)){
@@ -73,7 +72,8 @@ void main(void)
     
     LOG_INF("Sensor Message Queue Sample");
 	LOG_INF("MSGQ Size:               %d", MSGQ_SIZE);
-	LOG_INF("MSGQ Width:              %d", sizeof(struct mqsq_item_t));
+    //Abaixo não funciona no Zephyr 3.2.0. Verificar.
+	//LOG_INF("MSGQ Width:              %d", sizeof(struct mqsq_item_t));
 	LOG_INF("Sampling Interval:       %d ms", SAMPLE_INTERVAL);
 	LOG_INF("MSGQ Overflow Interval : %d ms", SAMPLE_INTERVAL*MSGQ_SIZE);
 

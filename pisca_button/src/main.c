@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <zephyr.h>
-#include <drivers/gpio.h>
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/gpio.h>
 
 #define LED0_NODE DT_ALIAS(led0)
 #define BUTTON0_NODE DT_NODELABEL(button0)

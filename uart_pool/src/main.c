@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <zephyr.h>
-#include <drivers/uart.h>
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/uart.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(uart_app);
 
 #define UART_NODE DT_NODELABEL(uart0)

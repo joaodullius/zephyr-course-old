@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <zephyr.h>
-#include <drivers/i2c.h>
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/i2c.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -16,7 +16,7 @@
 void main(void)
 {
 
-    printk("Starting i2c scanner at %s\n", DT_LABEL(I2C_NODE));
+    printk("Starting i2c scanner\n");
 
 	const struct device *i2c_dev = DEVICE_DT_GET(I2C_NODE);
     	if (i2c_dev == NULL || !device_is_ready(i2c_dev)) {
@@ -24,7 +24,7 @@ void main(void)
 		return;
 	}
 	
-	i2c_dev = device_get_binding(DT_LABEL(I2C_NODE));
+	i2c_dev = DEVICE_DT_GET(I2C_NODE);
 
     uint8_t buffer = 0;
 	uint8_t ret = 0;
